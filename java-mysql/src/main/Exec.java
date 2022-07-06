@@ -30,6 +30,11 @@ public class Exec {
 			
 			System.out.println("Connected");
 			
+			
+			String sql = "INSERT INTO member (name, sex, old, enter) VALUES ('大宮太一', '男', '32', '2022-06-27');";
+			pstmt.executeUpdate(sql);
+			
+			
 			// 後処理（リソースのクローズ）
 			rs.close();
 			pstmt.close();
