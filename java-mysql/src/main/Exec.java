@@ -2,6 +2,10 @@ package main;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Scanner;
 
 public class Exec {
@@ -17,7 +21,7 @@ public class Exec {
 				"root12345"
 			);
 			
-			
+			System.out.println("Connected");
 			/*
 			// SQL文の実行
 			PreparedStatement pstmt = con.prepareStatement("SELECT * FROM member");
@@ -30,7 +34,7 @@ public class Exec {
 			}
 			*/
 			
-			System.out.println("Connected");
+
 			
 			
 			Scanner scanner = new Scanner(System.in);
@@ -39,53 +43,15 @@ public class Exec {
 			
 			
 			switch(scanner.nextInt()) {
-			case 1 -> insertData();
+			case 1 -> insertData(con);
 			case 2 -> updateData();
 			case 3 -> deleteData();
 			case 9 -> showData();
 			default -> System.out.println("終了します。");
 			};
 			
-
 			
 			
-			
-			
-			
-			/*
-			while( scanner.nextInt() == 1) {
-				
-				String name, sex;
-				int old;
-				
-				// 情報入力
-				System.out.print("名前：");
-				name = scanner.next();
-				System.out.print("性別：");
-				sex = scanner.next();
-				System.out.print("年齢：");
-				old = scanner.nextInt();
-
-				
-				// 日付を取得
-				Calendar cl = Calendar.getInstance();
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				String today = sdf.format(cl.getTime());
-				
-				
-				System.out.println(name + ", " + sex + ", " + old);
-				System.out.print("データを追加しますか？　[追加：1　取り消し：0]　->　");
-				
-				if(scanner.nextInt() == 1) {
-					String sql = "INSERT INTO member (name, sex, old, enter) VALUES ('" + name + "', '" + sex + "', '" + old + "', '" + today + "');";
-					pstmt.executeUpdate(sql);
-					System.out.println("追加完了");
-				}
-				
-				System.out.print("[情報追加：1　終了：0]　->　");
-				
-			}
-			*/
 			
 			
 			
@@ -108,9 +74,44 @@ public class Exec {
 		
 	}
 	
-	public static void insertData() {
-		System.out.println("追加します。");
-	}
+	public static void insertData(Connection con) throws SQLException {
+		
+		String name, sex, today;
+		int old;
+		
+		String sql = "INSERT INTO member (name, sex, old, enter) VALUES (?, ?, ?, ?)";
+		PreparedStatement pstmt = con.prepareStatement(sql);
+		
+		Scanner scanner = new Scanner(System.in);
+		
+		System.out.println("追加する情報を入力してください。");
+		
+		// 情報入力
+		System.out.print("名前：");
+		name = scanner.next();
+		System.out.print("性別：");
+		sex = scanner.next();
+		System.out.print("年齢：");
+		old = scanner.nextInt();
+
+		// 日付を取得
+		Calendar cl = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		today = sdf.format(cl.getTime());
+		
+		// 確認
+		System.out.println("'" + name + ", " + sex + ", " + old + "'" + "　---　このデータを追加しますか？");
+		System.out.print("[追加：1　取り消し：0]　->　");
+		
+		if(scanner.nextInt() == 1) {
+			pstmt.setString(1, name);
+			pstmt.setString(2, sex);
+			pstmt.setInt(3, old);
+			pstmt.setString(4, today);
+			pstmt.executeUpdate();
+			System.out.println("追加完了");
+		}			
+}
 	
 	public static void updateData() {
 		System.out.println("変更します。");
