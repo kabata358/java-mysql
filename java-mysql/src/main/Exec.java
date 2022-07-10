@@ -3,6 +3,7 @@ package main;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -22,20 +23,6 @@ public class Exec {
 			);
 			
 			System.out.println("Connected");
-			/*
-			// SQL文の実行
-			PreparedStatement pstmt = con.prepareStatement("SELECT * FROM member");
-			ResultSet rs = pstmt.executeQuery();
-			
-			// 検索結果を表示
-			while (rs.next()) {
-				System.out.println(rs.getString("name"));
-				System.out.println(rs.getString("sex"));
-			}
-			*/
-			
-
-			
 			
 			Scanner scanner = new Scanner(System.in);
 			
@@ -46,7 +33,7 @@ public class Exec {
 			case 1 -> insertData(con);
 			case 2 -> updateData();
 			case 3 -> deleteData();
-			case 9 -> showData();
+			case 9 -> showData(con);
 			default -> System.out.println("終了します。");
 			};
 			
@@ -121,8 +108,15 @@ public class Exec {
 		System.out.println("削除します。");
 	}
 	
-	public static void showData() {
-		System.out.println("全件表示します。");
+	public static void showData(Connection con) throws SQLException {
+		String sql = "SELECT * FROM member";
+		PreparedStatement pstmt = con.prepareStatement(sql);
+		ResultSet rs = pstmt.executeQuery();
+		
+		while (rs.next()) {
+			System.out.printf("%d\t%s\t%s\t%d\t%s\t%s\n", rs.getInt("id"), rs.getString("name"), rs.getString("sex"), rs.getInt("old"), rs.getString("enter"), rs.getString("memo"));
+		}
+		
 	}
 
 }
