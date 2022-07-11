@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Scanner;
@@ -32,7 +33,7 @@ public class Exec {
 			switch(scanner.nextInt()) {
 			case 1 -> insertData(con);
 			case 2 -> updateData();
-			case 3 -> deleteData();
+			case 3 -> deleteData(con);
 			case 9 -> showData(con);
 			default -> System.out.println("終了します。");
 			};
@@ -104,8 +105,28 @@ public class Exec {
 		System.out.println("変更します。");
 	}
 	
-	public static  void deleteData() {
-		System.out.println("削除します。");
+	public static  void deleteData(Connection con) throws SQLException {
+		
+		showData(con);
+		
+		int id;
+		Scanner scanner = new Scanner(System.in);
+		
+		System.out.println("削除するidを入力してください。");
+		
+		System.out.print("id：");
+		id = scanner.nextInt();
+		
+		
+		
+		String sql = "DELETE FROM member WHERE id =" + id;
+		Statement smt = con.createStatement();
+		int rowsCount = smt.executeUpdate(sql);
+		
+		System.out.print(rowsCount + "レコード削除しました。");
+		
+		smt.close();
+		
 	}
 	
 	public static void showData(Connection con) throws SQLException {
