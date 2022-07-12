@@ -32,7 +32,7 @@ public class Exec {
 			
 			switch(scanner.nextInt()) {
 			case 1 -> insertData(con);
-			case 2 -> updateData();
+			case 2 -> updateData(con);
 			case 3 -> deleteData(con);
 			case 9 -> showData(con);
 			default -> System.out.println("終了します。");
@@ -101,8 +101,53 @@ public class Exec {
 		}			
 }
 	
-	public static void updateData() {
-		System.out.println("変更します。");
+	public static void updateData(Connection con) throws SQLException {
+		showData(con);
+		
+		int id;
+		Scanner scanner = new Scanner(System.in);
+		
+		System.out.println("更新するidを入力してください。");
+		
+		System.out.print("id：");
+		id = scanner.nextInt();
+		
+		
+		
+		String name, sex, today;
+		int old;
+		
+		String sql = "UPDATE member SET name = ?, sex = ?, old = ?, enter = ? WHERE id =" + id;
+		PreparedStatement pstmt = con.prepareStatement(sql);
+		
+		
+		System.out.println("更新する情報を入力してください。");
+		
+		// 情報入力
+		System.out.print("名前：");
+		name = scanner.next();
+		System.out.print("性別：");
+		sex = scanner.next();
+		System.out.print("年齢：");
+		old = scanner.nextInt();
+
+		// 日付を取得
+		Calendar cl = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		today = sdf.format(cl.getTime());
+		
+		// 確認
+		System.out.println("'" + name + ", " + sex + ", " + old + "'" + "　---　このデータに更新しますか？");
+		System.out.print("[更新：1　取り消し：0]　->　");
+		
+		if(scanner.nextInt() == 1) {
+			pstmt.setString(1, name);
+			pstmt.setString(2, sex);
+			pstmt.setInt(3, old);
+			pstmt.setString(4, today);
+			pstmt.executeUpdate();
+			System.out.println("更新完了");
+		}
 	}
 	
 	public static  void deleteData(Connection con) throws SQLException {
